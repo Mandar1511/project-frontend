@@ -20,7 +20,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        RazorChat
+        careetbolt
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -69,7 +69,8 @@ export default function SignUp() {
     const data = new FormData(event.currentTarget);
     const passwordsMatch = (data.get('password')=== data.get('confirm-password'));
     let newUser = {
-      userName: data.get('userName'),
+      firstName: data.get('firstName'),
+      lastName: data.get('lastName'),
       email: data.get('email'),
       password: data.get('password')
     };
@@ -110,11 +111,21 @@ export default function SignUp() {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  name="userName"
+                  name="firstName"
                   required
                   fullWidth
-                  id="userName"
-                  label="Username"
+                  id="firstName"
+                  label="first name"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  name="lastName"
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="last name"
                   autoFocus
                 />
               </Grid>

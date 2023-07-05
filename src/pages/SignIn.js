@@ -19,7 +19,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://careetbolt.app/">
-        RazorChat
+        careetbolt
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -94,7 +94,7 @@ export default function SignIn() {
               required
               fullWidth
               id="email"
-              label="Email or Username"
+              label="Email"
               name="email"
               autoComplete="email"
               autoFocus
