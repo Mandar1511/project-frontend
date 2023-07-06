@@ -43,7 +43,7 @@ export default function SignIn() {
             progress: undefined,
             theme: "light",
           });
-          localStorage.setItem('userInfo',JSON.stringify(data));
+          localStorage.setItem('jwt_token',(data.token));
       }
       catch(err){
           toast.error(`${err.response.data.message}`, {

@@ -51,7 +51,7 @@ export default function SignUp() {
         theme: "light",
       });
 
-      localStorage.setItem('userInfo',JSON.stringify(data));
+      localStorage.setItem('jwt_token',(data.token));
     }
     catch(err){
       
