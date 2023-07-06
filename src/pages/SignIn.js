@@ -19,7 +19,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://careetbolt.app/">
-        careetbolt
+        IITRecruit
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -33,9 +33,9 @@ const defaultTheme = createTheme();
 export default function SignIn() {
     // const navigate = useNavigate();
     async function handlePost(user){
-        try{
-          let {data} = await axios.post("http://localhost:5000/api/v1/users/signin",user,{withCredentials: true});
-          toast.success('Signed up successfully', {
+      try{
+          let {data} = await axios.post("http://localhost:8000/api/v1/users/login",user);
+          toast.success('logged in successfully', {
             position: "bottom-right",
             autoClose: 4000,
             hideProgressBar: false,
@@ -44,8 +44,8 @@ export default function SignIn() {
             theme: "light",
           });
           localStorage.setItem('userInfo',JSON.stringify(data));
-        }
-        catch(err){
+      }
+      catch(err){
           toast.error(`${err.response.data.message}`, {
             position: "bottom-right",
             autoClose: 3000,
@@ -54,7 +54,7 @@ export default function SignIn() {
             progress: undefined,
             theme: "light",
       });
-        }
+      }
     }
 
 
@@ -63,7 +63,7 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const user = {
-      mailOrname: data.get('email'),
+      email: data.get('email'),
       password: data.get('password')
     };
     handlePost(user);
@@ -95,6 +95,7 @@ export default function SignIn() {
               fullWidth
               id="email"
               label="Email"
+              type="email"
               name="email"
               autoComplete="email"
               autoFocus
