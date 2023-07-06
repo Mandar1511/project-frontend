@@ -11,6 +11,8 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -20,7 +22,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        careetbolt
+        IITRecruit
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -38,7 +40,7 @@ export default function SignUp() {
 
   async function handlePost(newUser){
     try{
-      const {data}  = await axios.post("http://localhost:5000/api/v1/users/signup",newUser);
+      const {data}  = await axios.post("http://localhost:8000/api/v1/users/signup",newUser);
 
       toast.success('registration successful', {
         position: "bottom-right",
@@ -68,12 +70,8 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const passwordsMatch = (data.get('password')=== data.get('confirm-password'));
-    let newUser = {
-      firstName: data.get('firstName'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password')
-    };
+    const mail = data.get('email');
+    const role = data.get('role');
     if(!passwordsMatch){
       toast.warn('passwords do not match', {
         position: "bottom-right",
@@ -84,7 +82,34 @@ export default function SignUp() {
         theme: "light",
       });
     }
+    else if(role===""){
+      toast.warn('please select your role', {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    else if(role==="student" && !mail.split("@")[1].startsWith("iit")){
+      toast.warn('Please enter your institute email address', {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
     else{
+      let newUser = {
+        firstName: data.get('firstName'),
+        lastName: data.get('lastName'),
+        email: data.get('email'),
+        password: data.get('password'),
+        role: data.get('role')
+      };
       handlePost(newUser);
     }
   };
@@ -95,7 +120,7 @@ export default function SignUp() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 3,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -164,19 +189,30 @@ export default function SignUp() {
                   inputProps={{ minLength: 8}}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
                   label="I accept Terms and Conditions"
                   required
                 />
               </Grid>
+
+              <Grid item>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                >
+                  <FormControlLabel value="student" control={<Radio />} label="student" name="role" id="role"/>
+                  <FormControlLabel value="recruiter" control={<Radio />} label="recruiter" name="role" id="role"/>
+                </RadioGroup>
+              </Grid>
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 2, mb: 2 }}
             >
               Sign Up
             </Button>
@@ -189,7 +225,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright sx={{ mt: 1 }} />
       </Container>
       <ToastContainer />
     </ThemeProvider>
