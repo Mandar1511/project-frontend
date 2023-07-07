@@ -3,7 +3,7 @@ import "./App.css";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import StudentApplications from "./pages/studentScreens/StudentApplications";
-import StudentHome from "./pages/studentScreens/StudentApplications";
+import StudentHome from "./pages/studentScreens/StudentHome";
 function App() {
   return (
     <BrowserRouter>
