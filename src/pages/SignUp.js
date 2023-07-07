@@ -1,48 +1,53 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
         IITRecruit
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+  async function handlePost(newUser) {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8000/api/v1/users/signup",
+        newUser
+      );
 
-
-  async function handlePost(newUser){
-    try{
-      const {data}  = await axios.post("http://localhost:8000/api/v1/users/signup",newUser);
-
-      toast.success('registration successful', {
+      toast.success("registration successful", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -51,10 +56,8 @@ export default function SignUp() {
         theme: "light",
       });
 
-      localStorage.setItem('jwt_token',(data.token));
-    }
-    catch(err){
-      
+      localStorage.setItem("jwt_token", data.token);
+    } catch (err) {
       toast.error(`${err.response.data.message}`, {
         position: "bottom-right",
         autoClose: 3000,
@@ -69,11 +72,12 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const passwordsMatch = (data.get('password')=== data.get('confirm-password'));
-    const mail = data.get('email');
-    const role = data.get('role');
-    if(!passwordsMatch){
-      toast.warn('passwords do not match', {
+    const passwordsMatch =
+      data.get("password") === data.get("confirm-password");
+    const mail = data.get("email");
+    const role = data.get("role");
+    if (!passwordsMatch) {
+      toast.warn("passwords do not match", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -81,9 +85,8 @@ export default function SignUp() {
         progress: undefined,
         theme: "light",
       });
-    }
-    else if(role===""){
-      toast.warn('please select your role', {
+    } else if (role === "") {
+      toast.warn("please select your role", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -91,9 +94,8 @@ export default function SignUp() {
         progress: undefined,
         theme: "light",
       });
-    }
-    else if(role==="student" && !mail.split("@")[1].startsWith("iit")){
-      toast.warn('Please enter your institute email address', {
+    } else if (role === "student" && !mail.split("@")[1].startsWith("iit")) {
+      toast.warn("Please enter your institute email address", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -101,14 +103,13 @@ export default function SignUp() {
         progress: undefined,
         theme: "light",
       });
-    }
-    else{
+    } else {
       let newUser = {
-        firstName: data.get('firstName'),
-        lastName: data.get('lastName'),
-        email: data.get('email'),
-        password: data.get('password'),
-        role: data.get('role')
+        firstName: data.get("firstName"),
+        lastName: data.get("lastName"),
+        email: data.get("email"),
+        password: data.get("password"),
+        role: data.get("role"),
       };
       handlePost(newUser);
     }
@@ -121,18 +122,22 @@ export default function SignUp() {
         <Box
           sx={{
             marginTop: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form"  onSubmit={(e)=>handleSubmit(e)} sx={{ mt: 3 }}>
+          <Box
+            component="form"
+            onSubmit={(e) => handleSubmit(e)}
+            sx={{ mt: 3 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -159,7 +164,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="email"
-                  type='email'
+                  type="email"
                   label="Email"
                   name="email"
                   autoComplete="email"
@@ -174,7 +179,7 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                  inputProps={{ minLength: 8}}
+                  inputProps={{ minLength: 8 }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -186,12 +191,14 @@ export default function SignUp() {
                   type="password"
                   id="confirm-password"
                   autoComplete="new-password"
-                  inputProps={{ minLength: 8}}
+                  inputProps={{ minLength: 8 }}
                 />
               </Grid>
               <Grid item>
                 <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  control={
+                    <Checkbox value="allowExtraEmails" color="primary" />
+                  }
                   label="I accept Terms and Conditions"
                   required
                 />
@@ -203,8 +210,20 @@ export default function SignUp() {
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
                 >
-                  <FormControlLabel value="student" control={<Radio />} label="student" name="role" id="role"/>
-                  <FormControlLabel value="recruiter" control={<Radio />} label="recruiter" name="role" id="role"/>
+                  <FormControlLabel
+                    value="student"
+                    control={<Radio />}
+                    label="student"
+                    name="role"
+                    id="role"
+                  />
+                  <FormControlLabel
+                    value="recruiter"
+                    control={<Radio />}
+                    label="recruiter"
+                    name="role"
+                    id="role"
+                  />
                 </RadioGroup>
               </Grid>
             </Grid>
