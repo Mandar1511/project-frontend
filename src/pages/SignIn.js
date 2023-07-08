@@ -24,7 +24,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://careetbolt.app/">
-        IITRecruit
+        careetbolt
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -50,9 +50,9 @@ export default function SignIn() {
         progress: undefined,
         theme: "light",
       });
-      localStorage.setItem("jwt_token", data.token);
+      if (data) localStorage.setItem("jwt_token", data.token);
     } catch (err) {
-      toast.error(`${err.response.data.message}`, {
+      toast.error(err, {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,

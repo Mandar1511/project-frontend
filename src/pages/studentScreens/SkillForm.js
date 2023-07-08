@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/system/Box";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -8,10 +8,68 @@ import Button from "@mui/material/Button";
 import { List } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ListItem } from "@mui/material";
-
-export default function SkillForm() {
-  console.log("called");
+import CircularProgress from "@mui/material/CircularProgress";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+export default function SkillForm({ isOpen }) {
   const [skills, setSkills] = useState([]);
+
+  useEffect(() => {
+    console.log("called");
+    fetchSkills();
+  }, [isOpen]);
+
+  const saveSkillsToDB = async () => {
+    try {
+      const options = {
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("jwt_token"),
+        },
+      };
+      await axios.patch(
+        "http://localhost:8000/api/v1/users/myskills",
+        skills,
+        options
+      );
+      // console.log(data);
+      toast.success("skills saved", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("something went wrong", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const fetchSkills = async () => {
+    try {
+      const options = {
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("jwt_token"),
+        },
+      };
+      const { data } = await axios.get(
+        "http://localhost:8000/api/v1/users/myskills",
+        options
+      );
+      console.log(data);
+      setSkills(data);
+    } catch (err) {
+      console.log("couldn't fetch skills");
+    }
+  };
 
   const removeSkill = (skill) => {
     console.log(skill);
@@ -19,30 +77,40 @@ export default function SkillForm() {
     console.log(skills);
   };
 
-  const listItems = skills.map((skill) => (
-    <ListItem
-      dense
-      style={{
-        backgroundColor: "#e6f7fa",
-        borderColor: "#d3eef2",
-        borderStyle: "solid",
-        borderBottom: "0",
-      }}
-      key={skill}
-    >
-      <Button onClick={() => removeSkill(skill)}>
-        <DeleteIcon />
-      </Button>
-      {skill}
-    </ListItem>
-  ));
+  let listItems;
+
+  if (skills.length > 0) {
+    listItems = skills.map((skill) => (
+      <ListItem
+        dense
+        style={{
+          backgroundColor: "#e6f7fa",
+          borderColor: "#d3eef2",
+          borderStyle: "solid",
+          borderBottom: "0",
+        }}
+        key={skill}
+      >
+        <Button onClick={() => removeSkill(skill)}>
+          <DeleteIcon />
+        </Button>
+        {skill}
+      </ListItem>
+    ));
+  } else {
+    listItems = (
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const skill = data.get("skill");
     if (skills.indexOf(skill) === -1) {
-      setSkills([...skills, skill]);
+      setSkills([skill, ...skills]);
     }
   };
 
@@ -67,8 +135,10 @@ export default function SkillForm() {
         </DialogContent>
         <DialogActions>
           <Button type="submit">Add</Button>
+          <Button onClick={saveSkillsToDB}>Save Changes</Button>
         </DialogActions>
         <List>{listItems}</List>
+        <ToastContainer></ToastContainer>
       </Box>
     </>
   );
