@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/system/Box";
 import Grid from "@mui/system/Unstable_Grid";
 import DialogActions from "@mui/material/DialogActions";
-import PrimarySearchAppBar from "../AppBar";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -14,34 +13,69 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import SkillForm from "./SkillForm";
+import { Worker } from "@react-pdf-viewer/core";
+import { DialogContent, DialogContentText, TextField } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Tooltip } from "@mui/material";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
 import axios from "axios";
+import SkillForm from "./SkillForm";
 import StudentApplications from "./StudentApplications";
+import ResumeForm from "./ResumeForm";
+import PrimarySearchAppBar from "../AppBar";
 
 function StudentHome() {
   const preset_key = "rmn5bxrh";
   const cloud_name = "dwyarvqps";
   const [open, setOpen] = useState(false);
+  const [openResune, setOpenResume] = useState(false);
+  const [viewResume, setViewResume] = useState(false);
+  const [openInstitute, setOpenInstitue] = useState(false);
+  const [openSocial, setOpenSocial] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [institute, setInstitute] = useState("My Institute Name");
   const [graduationYear, sertGraduationYear] = useState("My graduation Year");
   const [major, setMajor] = useState("major degree");
-  const [linkedIn, setLinkedIn] = useState("https://www.linkedin.com/");
-  const [github, setGithub] = useState("http://localhost:3000/");
+  const [linkedIn, setLinkedIn] = useState("");
+  const [github, setGithub] = useState("");
   const [profileImg, setProfileImg] = useState("");
+  const [resume, setResume] = useState("./blankpdf.pdf");
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [openResune]);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+  const handleClickOpenResume = () => {
+    setOpenResume(true);
+  };
+  const handleClickViewResume = () => {
+    setViewResume(true);
+  };
+  const handleOpenInstitue = () => {
+    setOpenInstitue(true);
+  };
+  const handleOpenSocial = () => {
+    setOpenSocial(true);
+  };
   const handleClose = () => {
     setOpen(false);
   };
-
+  const handleCloseResume = () => {
+    setOpenResume(false);
+  };
+  const handleCloseViewResume = () => {
+    setViewResume(false);
+  };
+  const handleCloseInstitue = () => {
+    setOpenInstitue(false);
+  };
+  const handleCloseSocial = () => {
+    setOpenSocial(false);
+  };
   const fetchUser = async () => {
     try {
       const options = {
@@ -53,6 +87,7 @@ function StudentHome() {
         "http://localhost:8000/api/v1/users/me",
         options
       );
+      console.log("Home ", data);
       setFirstName(data.firstName);
       setLastName(data.lastName);
       if (data.education) {
@@ -60,19 +95,72 @@ function StudentHome() {
         sertGraduationYear(data.education.graduationYear);
         setMajor(data.education.major);
       }
-      if (data.socialMedia.linkedIn) {
-        setLinkedIn(data.socialMedia.linkedIn);
-      }
-      if (data.socialMedia.github) {
-        setGithub(data.socialMedia.github);
+      if (data.socialMedia) {
+        if (data.socialMedia.linkedIn) {
+          setLinkedIn(data.socialMedia.linkedIn);
+        }
+        if (data.socialMedia.github) {
+          setGithub(data.socialMedia.github);
+        }
       }
       if (data.profileImg) {
+        console.log("set image");
         setProfileImg(data.profileImg);
       }
-      // console.log(data);
+      if (data.resume) {
+        setResume(data.resume);
+      }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleInstitueSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const institute = formData.get("institute");
+    const major = formData.get("major");
+    const graduationYear = formData.get("graduation");
+    const education = { institute, major, graduationYear };
+    const options = {
+      headers: {
+        authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      },
+    };
+    const { data } = await axios.patch(
+      "http://localhost:8000/api/v1/users/education",
+      {
+        education,
+      },
+      options
+    );
+    setInstitute(data.institute);
+    sertGraduationYear(data.graduationYear);
+    setMajor(data.major);
+    handleCloseInstitue();
+  };
+
+  const handleSocialMediaSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const linkedIn = formData.get("linkedIn");
+    const github = formData.get("github");
+    const socialMedia = { linkedIn, github };
+    const options = {
+      headers: {
+        authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      },
+    };
+    const { data } = await axios.patch(
+      "http://localhost:8000/api/v1/users/socialmedia",
+      {
+        socialMedia,
+      },
+      options
+    );
+    setLinkedIn(data.linkedIn);
+    setGithub(data.github);
+    handleCloseSocial();
   };
 
   const handleProfileImg = async (file) => {
@@ -109,10 +197,9 @@ function StudentHome() {
   return (
     <>
       <PrimarySearchAppBar />
-      <Box sx={{ flexGrow: 1 }} mt={2} marginLeft={2}>
+      <Box sx={{ flexGrow: 1 }} mt={1} marginLeft={2}>
         <Grid container spacing={2}>
-          <Grid xs={12} md={3} marginBottom={7}>
-            <h1>Profile</h1>
+          <Grid xs={12} md={3.1} marginBottom={7} mt={3}>
             <Card xs={6} md={3}>
               <Button component="label">
                 <input
@@ -126,36 +213,62 @@ function StudentHome() {
                   sx={{ width: 150, height: 150 }}
                 />
               </Button>
-
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {firstName} {lastName}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {institute} {graduationYear}
+                  <Tooltip title="edit">
+                    <IconButton onClick={handleOpenInstitue}>
+                      <ModeEditRoundedIcon color="action" fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Typography>
-                <Typography variant="body2" color="text.secondary" mt={2}>
+                <Typography variant="body2" color="text.secondary" mt={1}>
                   {major}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" mt={2}>
-                  <LinkedInIcon
+                  <IconButton
                     onClick={() =>
-                      window.open(linkedIn, "rel=noopener noreferrer")
+                      window.open(linkedIn, "_blank", "noreferrer")
                     }
-                  />
-                  <GitHubIcon
-                    onClick={() =>
-                      window.open(github, "rel=noopener noreferrer")
-                    }
-                  />
+                  >
+                    <LinkedInIcon />
+                  </IconButton>
+
+                  <span></span>
+                  <IconButton
+                    onClick={() => window.open(github, "_blank", "noreferrer")}
+                  >
+                    <GitHubIcon />
+                  </IconButton>
+
+                  <Tooltip title="edit">
+                    <IconButton onClick={handleOpenSocial}>
+                      <ModeEditRoundedIcon color="action" fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  mt={2}
+                ></Typography>
               </CardContent>
               <CardActions>
-                <Button size="medium" variant="outlined">
-                  Resume
-                </Button>
                 <Button variant="outlined" onClick={handleClickOpen}>
                   Skills
+                </Button>
+              </CardActions>
+              <CardActions>
+                <Button onClick={handleClickOpenResume} variant="outlined">
+                  upload resume
+                </Button>
+              </CardActions>
+              <CardActions>
+                <Button onClick={handleClickViewResume} variant="outlined">
+                  view resume
                 </Button>
               </CardActions>
               <CardActions>
@@ -172,11 +285,154 @@ function StudentHome() {
                     <SkillForm />
                   </Dialog>
                 </div>
+                <div>
+                  <Dialog
+                    open={openResune}
+                    onClose={handleCloseResume}
+                    components={Box}
+                  >
+                    <DialogTitle>
+                      <DialogActions>
+                        <Button onClick={handleCloseResume}>
+                          <CloseIcon />
+                        </Button>
+                      </DialogActions>
+                      Upload Resume
+                    </DialogTitle>
+                    <ResumeForm />
+                  </Dialog>
+                </div>
+
+                <div>
+                  <Dialog
+                    open={viewResume}
+                    onClose={handleCloseViewResume}
+                    components={Box}
+                    fullScreen
+                  >
+                    <AppBar sx={{ position: "relative" }}>
+                      <Toolbar>
+                        <IconButton
+                          edge="start"
+                          color="inherit"
+                          onClick={handleCloseViewResume}
+                          aria-label="close"
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </Toolbar>
+                    </AppBar>
+                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                      <Viewer fileUrl={resume} />
+                    </Worker>
+                  </Dialog>
+                </div>
+
+                <div>
+                  <Dialog
+                    open={openInstitute}
+                    onClose={handleCloseInstitue}
+                    components={Box}
+                  >
+                    <Box
+                      component="form"
+                      onSubmit={(e) => handleInstitueSubmit(e)}
+                    >
+                      <DialogContent>
+                        <DialogContentText visibility="hidden">
+                          To subscribe to this website, please enter your email
+                        </DialogContentText>
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="institute"
+                          label="Institue Name"
+                          type="text"
+                          name="institute"
+                          fullWidth
+                          required
+                          variant="standard"
+                        />
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="graduation-year"
+                          label="Graduation Year"
+                          type="number"
+                          name="graduation"
+                          fullWidth
+                          required
+                          variant="standard"
+                        />
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="major"
+                          label="Branch"
+                          type="text"
+                          name="major"
+                          fullWidth
+                          required
+                          variant="standard"
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleCloseInstitue}>Cancel</Button>
+                        <Button type="submit">Save</Button>
+                      </DialogActions>
+                    </Box>
+                  </Dialog>
+                </div>
+
+                <div>
+                  <Dialog
+                    open={openSocial}
+                    onClose={handleCloseSocial}
+                    components={Box}
+                  >
+                    <Box
+                      component="form"
+                      onSubmit={(e) => handleSocialMediaSubmit(e)}
+                    >
+                      <DialogContent>
+                        <DialogContentText visibility="hidden">
+                          To subscribe to this website, please enter your email
+                        </DialogContentText>
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="linkedIn"
+                          label="LinkedIn URL"
+                          type="text"
+                          name="linkedIn"
+                          fullWidth
+                          required
+                          variant="standard"
+                        />
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="github"
+                          label="Github URL"
+                          type="text"
+                          name="github"
+                          fullWidth
+                          required
+                          variant="standard"
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleCloseSocial}>Cancel</Button>
+                        <Button type="submit">Save</Button>
+                      </DialogActions>
+                    </Box>
+                  </Dialog>
+                </div>
               </CardActions>
             </Card>
           </Grid>
 
-          <Grid xs={12} md={9}>
+          <Grid xs={12} md={8.9}>
             <StudentApplications />
           </Grid>
         </Grid>

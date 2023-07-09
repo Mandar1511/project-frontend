@@ -8,12 +8,11 @@ import Button from "@mui/material/Button";
 import { List } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ListItem } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import CircularAnimation from "./CircularAnimation";
 export default function SkillForm({ isOpen }) {
   const [skills, setSkills] = useState([]);
-
   useEffect(() => {
     console.log("called");
     fetchSkills();
@@ -78,32 +77,23 @@ export default function SkillForm({ isOpen }) {
   };
 
   let listItems;
-
-  if (skills.length > 0) {
-    listItems = skills.map((skill) => (
-      <ListItem
-        dense
-        style={{
-          backgroundColor: "#e6f7fa",
-          borderColor: "#d3eef2",
-          borderStyle: "solid",
-          borderBottom: "0",
-        }}
-        key={skill}
-      >
-        <Button onClick={() => removeSkill(skill)}>
-          <DeleteIcon />
-        </Button>
-        {skill}
-      </ListItem>
-    ));
-  } else {
-    listItems = (
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  listItems = skills.map((skill) => (
+    <ListItem
+      dense
+      style={{
+        backgroundColor: "#e6f7fa",
+        borderColor: "#d3eef2",
+        borderStyle: "solid",
+        borderBottom: "0",
+      }}
+      key={skill}
+    >
+      <Button onClick={() => removeSkill(skill)}>
+        <DeleteIcon />
+      </Button>
+      {skill}
+    </ListItem>
+  ));
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -137,6 +127,7 @@ export default function SkillForm({ isOpen }) {
           <Button type="submit">Add</Button>
           <Button onClick={saveSkillsToDB}>Save Changes</Button>
         </DialogActions>
+        <CircularAnimation />
         <List>{listItems}</List>
         <ToastContainer></ToastContainer>
       </Box>
