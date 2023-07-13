@@ -50,7 +50,10 @@ export default function SignIn() {
         progress: undefined,
         theme: "light",
       });
-      if (data) localStorage.setItem("jwt_token", data.token);
+      if (data) {
+        localStorage.setItem("jwt_token", data.token);
+        localStorage.setItem("role", data.role);
+      }
     } catch (err) {
       toast.error(err, {
         position: "bottom-right",

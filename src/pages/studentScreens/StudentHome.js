@@ -19,6 +19,8 @@ import { AppBar, Toolbar, IconButton, Tooltip } from "@mui/material";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
+import UploadIcon from "@mui/icons-material/Upload";
+import PreviewIcon from "@mui/icons-material/Preview";
 import axios from "axios";
 import SkillForm from "./SkillForm";
 import StudentApplications from "./StudentApplications";
@@ -40,7 +42,7 @@ function StudentHome() {
   const [major, setMajor] = useState("major degree");
   const [linkedIn, setLinkedIn] = useState("");
   const [github, setGithub] = useState("");
-  const [profileImg, setProfileImg] = useState("");
+  const [profileImg, setProfileImg] = useState("./userImg.png");
   const [resume, setResume] = useState("./blankpdf.pdf");
   useEffect(() => {
     fetchUser();
@@ -197,10 +199,17 @@ function StudentHome() {
   return (
     <>
       <PrimarySearchAppBar />
-      <Box sx={{ flexGrow: 1 }} mt={1} marginLeft={2}>
+      <Box sx={{ flexGrow: 1 }} mt={1} style={{ background: "#F3F8FF" }}>
         <Grid container spacing={2}>
-          <Grid xs={12} md={3.1} marginBottom={7} mt={3}>
-            <Card xs={6} md={3}>
+          <Grid xs={12} md={3} marginBottom={4} mt={3}>
+            <Card
+              xs={6}
+              md={3}
+              style={{
+                background: "#F3F8FF",
+                color: "#002E94",
+              }}
+            >
               <Button component="label">
                 <input
                   type="file"
@@ -214,22 +223,27 @@ function StudentHome() {
                 />
               </Button>
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h4" component="div">
                   {firstName} {lastName}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="#083AA9">
                   {institute} {graduationYear}
                   <Tooltip title="edit">
                     <IconButton onClick={handleOpenInstitue}>
-                      <ModeEditRoundedIcon color="action" fontSize="small" />
+                      <ModeEditRoundedIcon
+                        color="action"
+                        fontSize="small"
+                        style={{ color: "#1746A2" }}
+                      />
                     </IconButton>
                   </Tooltip>
                 </Typography>
-                <Typography variant="body2" color="text.secondary" mt={1}>
+                <Typography variant="body2" color="#083AA9">
                   {major}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" mt={2}>
+                <Typography variant="body2" mt={2}>
                   <IconButton
+                    style={{ color: "#002E94" }}
                     onClick={() =>
                       window.open(linkedIn, "_blank", "noreferrer")
                     }
@@ -239,6 +253,7 @@ function StudentHome() {
 
                   <span></span>
                   <IconButton
+                    style={{ color: "#002E94" }}
                     onClick={() => window.open(github, "_blank", "noreferrer")}
                   >
                     <GitHubIcon />
@@ -246,7 +261,10 @@ function StudentHome() {
 
                   <Tooltip title="edit">
                     <IconButton onClick={handleOpenSocial}>
-                      <ModeEditRoundedIcon color="action" fontSize="small" />
+                      <ModeEditRoundedIcon
+                        fontSize="small"
+                        style={{ color: "#1746A2" }}
+                      />
                     </IconButton>
                   </Tooltip>
                 </Typography>
@@ -257,18 +275,33 @@ function StudentHome() {
                 ></Typography>
               </CardContent>
               <CardActions>
-                <Button variant="outlined" onClick={handleClickOpen}>
+                <Button
+                  variant="outlined"
+                  onClick={handleClickOpen}
+                  fullWidth
+                  style={{ color: "#002E94" }}
+                >
                   Skills
                 </Button>
               </CardActions>
               <CardActions>
-                <Button onClick={handleClickOpenResume} variant="outlined">
-                  upload resume
+                <Button
+                  onClick={handleClickOpenResume}
+                  variant="outlined"
+                  fullWidth
+                  style={{ color: "#002E94" }}
+                >
+                  <UploadIcon /> resume
                 </Button>
               </CardActions>
               <CardActions>
-                <Button onClick={handleClickViewResume} variant="outlined">
-                  view resume
+                <Button
+                  onClick={handleClickViewResume}
+                  variant="outlined"
+                  fullWidth
+                  style={{ color: "#002E94", outlineColor: "yellow" }}
+                >
+                  <PreviewIcon /> resume
                 </Button>
               </CardActions>
               <CardActions>
@@ -310,7 +343,10 @@ function StudentHome() {
                     components={Box}
                     fullScreen
                   >
-                    <AppBar sx={{ position: "relative" }}>
+                    <AppBar
+                      sx={{ position: "fixed" }}
+                      style={{ background: "#3E64FF" }}
+                    >
                       <Toolbar>
                         <IconButton
                           edge="start"
@@ -368,7 +404,7 @@ function StudentHome() {
                           autoFocus
                           margin="dense"
                           id="major"
-                          label="Branch"
+                          label="Course Name"
                           type="text"
                           name="major"
                           fullWidth
@@ -431,9 +467,25 @@ function StudentHome() {
               </CardActions>
             </Card>
           </Grid>
-
-          <Grid xs={12} md={8.9}>
-            <StudentApplications />
+          <Grid xs={12} md={5.5} mt={3}>
+            <Card xs={6} style={{ background: "#F3F8FF", color: "#002E94" }}>
+              <StudentApplications />
+            </Card>
+          </Grid>
+          <Grid xs={12} md={3.4} mt={3}>
+            <Card xs={6} style={{ background: "#F3F8FF", color: "#002E94" }}>
+              <Typography
+                variant="h4"
+                mt={2.2}
+                mb={2}
+                color={"#002E94"}
+                style={{ textShadow: "1px 1px 2px gray" }}
+                position="relative"
+                align="center"
+              >
+                Recommended Jobs
+              </Typography>
+            </Card>
           </Grid>
         </Grid>
       </Box>

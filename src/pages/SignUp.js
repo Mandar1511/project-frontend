@@ -55,8 +55,10 @@ export default function SignUp() {
         progress: undefined,
         theme: "light",
       });
-
-      localStorage.setItem("jwt_token", data.token);
+      if (data) {
+        localStorage.setItem("jwt_token", data.token);
+        localStorage.setItem("role", data.role);
+      }
     } catch (err) {
       toast.error(`${err.response.data.message}`, {
         position: "bottom-right",
